@@ -76,9 +76,9 @@ pipeline {
                 }
 	   }
 	 }
-	 /*stage("Deploy to SIT Environment") {
+	 stage("Deploy to SIT Environment") {
             steps {
-		sshPublisher(publishers: [sshPublisherDesc(configName: 'sitTomcat', 
+		sshPublisher(publishers: [sshPublisherDesc(configName: 'ansible-server', 
 							   transfers: [sshTransfer(cleanRemote: false, 
 							   excludes: '', execCommand: 'docker run -itd byresh/myapp:v0.${BUILD_NUMBER}', 
 							   execTimeout: 120000, 
@@ -94,6 +94,6 @@ pipeline {
 							  useWorkspaceInPromotion: false, 
 							  verbose: false)])
 	    }
-	  }*/
+	  }
         }
 }
