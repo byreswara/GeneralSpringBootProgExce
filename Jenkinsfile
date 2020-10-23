@@ -45,7 +45,7 @@ pipeline {
             sh "docker build -t myapp:v0.${BUILD_NUMBER} ."
 		        sh "docker tag myapp:v0.${BUILD_NUMBER} byresh/myapp:v0.${BUILD_NUMBER}"
             withCredentials([usernameColonPassword(credentialsId: 'nexus_cred', variable: 'docker_cred')]) {
-            sh "docker push byresh/$ARTIFACT_ID:${BUILD_NUMBER}"
+            sh "docker push byresh/myapp:v0.${BUILD_NUMBER}"
             }
 	    }
 	  }
@@ -76,6 +76,24 @@ pipeline {
                 }
 	   }
 	 }
-	 
+	 stage("Deploy to SIT Environment") {
+            steps {
+		sshPublisher(publishers: [sshPublisherDesc(configName: 'sitTomcat', 
+							   transfers: [sshTransfer(cleanRemote: false, 
+							   excludes: '', execCommand: 'docker run -itd byresh/myapp:v0.${BUILD_NUMBER}', 
+							   execTimeout: 120000, 
+							   flatten: false, 
+							   makeEmptyDirs: false, 
+							  noDefaultExcludes: false, 
+							  patternSeparator: '[, ]+', 
+							  remoteDirectory: '', 
+							  remoteDirectorySDF: false, 
+							  removePrefix: '', 
+			          			  sourceFiles: '')], 
+                             				  usePromotionTimestamp: false, 
+							  useWorkspaceInPromotion: false, 
+							  verbose: false)])
+	    }
+	  }
         }
 }
