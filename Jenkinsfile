@@ -19,13 +19,13 @@ pipeline {
                 sh 'mvn clean test'
 	    }
 	 }
-	 stage("SonarQube analysis") {
+	 /*stage("SonarQube analysis") {
              steps {
                  withSonarQubeEnv('sonar') {
                   sh 'mvn sonar:sonar'
                  }    
              }
-         }
+         }*/
 	 stage('package') {
             steps {
 		tool name: 'maven', type: 'maven'
