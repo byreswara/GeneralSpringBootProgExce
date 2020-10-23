@@ -76,7 +76,7 @@ pipeline {
                 }
 	   }
 	 }
-	 stage("Deploy to SIT Environment") {
+	 /*stage("Deploy to SIT Environment") {
             steps {
 		sshPublisher(publishers: [sshPublisherDesc(configName: 'sitTomcat', 
 							   transfers: [sshTransfer(cleanRemote: false, 
@@ -94,6 +94,6 @@ pipeline {
 							  useWorkspaceInPromotion: false, 
 							  verbose: false)])
 	    }
-	  }
+	  }*/
         }
 }
