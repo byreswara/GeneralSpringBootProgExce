@@ -4,7 +4,7 @@ pipeline {
        maven 'maven'
      }
      environment {
-        NEXUS_URL = "http://13.212.71.76:8081/content/repositories/releases/"
+        NEXUS_URL = "http://54.254.226.187:8081/content/repositories/releases/"
 	NEXUS_REPO_ID = "releases"
 	GROUP_ID="`echo -e 'setns x=http://maven.apache.org/POM/4.0.0\ncat /x:project/x:groupId/text()' | xmllint --shell pom.xml | grep -v /`"
         ARTIFACT_ID="`echo -e 'setns x=http://maven.apache.org/POM/4.0.0\ncat /x:project/x:artifactId/text()' | xmllint --shell pom.xml | grep -v /`"
@@ -32,18 +32,18 @@ pipeline {
                 sh 'mvn package'
 		}
 	 }
-	 /*stage('Publish Artifacts to Nexus') {
+	 stage('Publish Artifacts to Nexus') {
             steps {
               script{
 	        sh "mvn -B deploy:deploy-file -Durl=$NEXUS_URL -DrepositoryId=$NEXUS_REPO_ID -DgroupId=$GROUP_ID -Dversion=$NEXUS_VERSION -DartifactId=$ARTIFACT_ID -Dpackaging=war -Dfile=$FILE_NAME"
 	      }
             }
 	  }
-	 */
+	
    stage("Build Docker image and push") {
             steps { 
-            sh "docker build -t $ARTIFACT_ID:${BUILD_NUMBER} ."
-		        sh "docker tag $ARTIFACT_ID:${BUILD_NUMBER} byresh/$ARTIFACT_ID:${BUILD_NUMBER}"
+            sh "docker build -t myapp:v0.${BUILD_NUMBER} ."
+		        sh "docker tag myapp:v0.${BUILD_NUMBER} byresh/myapp:v0.${BUILD_NUMBER}"
             withCredentials([usernameColonPassword(credentialsId: 'nexus_cred', variable: 'docker_cred')]) {
             sh "docker push byresh/$ARTIFACT_ID:${BUILD_NUMBER}"
             }
