@@ -4,7 +4,7 @@ pipeline {
        maven 'maven'
      }
      environment {
-        NEXUS_URL = "http://54.254.226.187:8081/content/repositories/releases/"
+        NEXUS_URL = "http://13.229.236.107:8081/content/repositories/releases/"
 	NEXUS_REPO_ID = "releases"
 	GROUP_ID="`echo -e 'setns x=http://maven.apache.org/POM/4.0.0\ncat /x:project/x:groupId/text()' | xmllint --shell pom.xml | grep -v /`"
         ARTIFACT_ID="`echo -e 'setns x=http://maven.apache.org/POM/4.0.0\ncat /x:project/x:artifactId/text()' | xmllint --shell pom.xml | grep -v /`"
@@ -43,11 +43,11 @@ pipeline {
    stage("Build Docker image and push") {
             steps { 
             sh "docker build -t myapp:v0.${BUILD_NUMBER} ."
-		        sh "docker tag myapp:v0.${BUILD_NUMBER} byresh/myapp:v0.${BUILD_NUMBER}"
-            withCredentials([usernameColonPassword(credentialsId: 'nexus_cred', variable: 'docker_cred')]) {
-            sh "docker push byresh/myapp:v0.${BUILD_NUMBER}"
+            sh "docker tag myapp:v0.${BUILD_NUMBER} byresh/myapp:v0.${BUILD_NUMBER}"
+	    withDockerRegistry(credentialsId: 'docker_cred', url: 'https://hub.docker.com/') {
+	    sh "docker push byresh/myapp:v0.${BUILD_NUMBER}"    
             }
-	    }
+           }
 	  }
 	      
 	 stage('Waiting for Approval'){
