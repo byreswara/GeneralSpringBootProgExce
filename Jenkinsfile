@@ -19,27 +19,27 @@ pipeline {
                 sh 'mvn clean test'
 	    }
 	 }
-	 stage("SonarQube analysis") {
+	/* stage("SonarQube analysis") {
              steps {
                  withSonarQubeEnv('sonar') {
                   sh 'mvn sonar:sonar'
                  }    
              }
-         }
+         }*/
 	 stage('package') {
             steps {
 		tool name: 'maven', type: 'maven'
                 sh 'mvn package'
 		}
 	 }*/
-	 /*stage('Publish Artifacts to Nexus') {
+	 stage('Publish Artifacts to Nexus') {
             steps {
               script{
 	        sh "mvn -B deploy:deploy-file -Durl=$NEXUS_URL -DrepositoryId=$NEXUS_REPO_ID -DgroupId=$GROUP_ID -Dversion=$NEXUS_VERSION -DartifactId=$ARTIFACT_ID -Dpackaging=war -Dfile=$FILE_NAME"
 	      }
             }
 	  }
-	*/
+	
    stage("Build Docker image and push") {
             steps { 
             sh "docker build -t myapp:v0.${BUILD_NUMBER} ."
