@@ -25,13 +25,13 @@ pipeline {
                   sh 'mvn sonar:sonar'
                  }    
              }
-         }*/
+         }
 	 stage('package') {
             steps {
 		tool name: 'maven', type: 'maven'
                 sh 'mvn package'
 		}
-	 }
+	 }*/
 	 /*stage('Publish Artifacts to Nexus') {
             steps {
               script{
@@ -44,8 +44,9 @@ pipeline {
             steps { 
             sh "docker build -t myapp:v0.${BUILD_NUMBER} ."
             sh "docker tag myapp:v0.${BUILD_NUMBER} byresh/myapp:v0.${BUILD_NUMBER}"
-	    withDockerRegistry(credentialsId: 'docker_cred', url: 'https://hub.docker.com/') {
-	    sh "docker push byresh/myapp:v0.${BUILD_NUMBER}"    
+	    withCredentials([usernamePassword(credentialsId: 'docker_cred', passwordVariable: 'pass', usernameVariable: 'user')]) {
+            sh "docker login"
+	    sh "docker push byresh/myapp:v0.${BUILD_NUMBER}"
             }
            }
 	  }
