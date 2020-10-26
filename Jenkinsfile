@@ -82,7 +82,6 @@ pipeline {
 		sshPublisher(publishers: [sshPublisherDesc(configName: 'ansible-server', 
 							   transfers: [sshTransfer(cleanRemote: false, 
 							   excludes: '', execCommand: 'docker run -itd byresh/myapp:v0.${BUILD_NUMBER}', 
-							   execTimeout: 190000, 
 							   flatten: false, 
 							   makeEmptyDirs: false, 
 							  noDefaultExcludes: false, 
