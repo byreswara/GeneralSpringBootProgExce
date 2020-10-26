@@ -13,13 +13,13 @@ pipeline {
         FILE_NAME="target/${ARTIFACT_ID}-${VERSION}.jar"
       }
       stages {
-	stage('Unit Test') {
+	/*stage('Unit Test') {
             steps {
 		tool name: 'maven', type: 'maven'
                 sh 'mvn clean test'
 	    }
 	 }
-	 /*stage("SonarQube analysis") {
+	 stage("SonarQube analysis") {
              steps {
                  withSonarQubeEnv('sonar') {
                   sh 'mvn sonar:sonar'
@@ -45,7 +45,7 @@ pipeline {
             sh "docker build -t myapp:v0.${BUILD_NUMBER} ."
             sh "docker tag myapp:v0.${BUILD_NUMBER} byresh/myapp:v0.${BUILD_NUMBER}"
 	    withCredentials([usernamePassword(credentialsId: 'docker_cred', passwordVariable: 'pass', usernameVariable: 'user')]) {
-            sh "docker login"
+            sh "docker login --username $user --password $pass"
 	    sh "docker push byresh/myapp:v0.${BUILD_NUMBER}"
             }
            }
