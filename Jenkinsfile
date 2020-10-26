@@ -13,7 +13,7 @@ pipeline {
         FILE_NAME="target/${ARTIFACT_ID}-${VERSION}.jar"
       }
       stages {
-	/*stage('Unit Test') {
+	stage('Unit Test') {
             steps {
 		tool name: 'maven', type: 'maven'
                 sh 'mvn clean test'
@@ -31,7 +31,7 @@ pipeline {
 		tool name: 'maven', type: 'maven'
                 sh 'mvn package'
 		}
-	 }*/
+	 }
 	 stage('Publish Artifacts to Nexus') {
             steps {
               script{
