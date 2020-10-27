@@ -4,7 +4,7 @@ pipeline {
        maven 'maven'
      }
      environment {
-        NEXUS_URL = "http://13.229.236.107:8081/content/repositories/releases/"
+        NEXUS_URL = "http://13.229.50.57:8081/content/repositories/releases/"
 	NEXUS_REPO_ID = "releases"
 	GROUP_ID="`echo -e 'setns x=http://maven.apache.org/POM/4.0.0\ncat /x:project/x:groupId/text()' | xmllint --shell pom.xml | grep -v /`"
         ARTIFACT_ID="`echo -e 'setns x=http://maven.apache.org/POM/4.0.0\ncat /x:project/x:artifactId/text()' | xmllint --shell pom.xml | grep -v /`"
@@ -40,7 +40,7 @@ pipeline {
             }
 	  }
 	*/
-   stage("Build Docker image and push") {
+   /*stage("Build Docker image and push to dockerhub") {
             steps { 
             sh "docker build -t myapp:v0.${BUILD_NUMBER} ."
             sh "docker tag myapp:v0.${BUILD_NUMBER} byresh/myapp:v0.${BUILD_NUMBER}"
@@ -49,9 +49,18 @@ pipeline {
 	    sh "docker push byresh/myapp:v0.${BUILD_NUMBER}"
             }
            }
-	  }
-	      
-	 stage('Waiting for Approval'){
+	  }*/
+     stage("Build Docker image and push to dockerhub") {
+            steps { 
+            sh "docker build -t myapp:v0.${BUILD_NUMBER} ."
+            sh "docker tag myapp:v0.${BUILD_NUMBER} 13.212.168.95:8083/myapp:v0.${BUILD_NUMBER}"
+	    withCredentials([usernamePassword(credentialsId: 'nexus_cred', passwordVariable: 'nexus-docker_pass', usernameVariable: 'nexus_docker_user')]) {
+            sh "docker login --username $nexus_docker_user --password $nexus-docker_pass 13.212.168.95:8083"
+	    sh "docker push 13.212.168.95:8083/myapp:v0.${BUILD_NUMBER}"
+            }
+           }
+	  }  
+	/* stage('Waiting for Approval'){
            steps {
 	      script {
 	        slackSend channel: '#anz',
@@ -94,6 +103,6 @@ pipeline {
 							  useWorkspaceInPromotion: false, 
 							  verbose: false)])
 	    }
-	  }
+	  }*/
         }
 }
