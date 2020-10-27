@@ -27,7 +27,7 @@ pipeline {
                  }    
              }
          }
-	 stage("Quality Gate status") {
+	/* stage("Quality Gate status") {
 	  steps {
 	    script {
                 def qualitygate = waitForQualityGate()
@@ -36,7 +36,7 @@ pipeline {
 		}
 	    }
 	    }
-	}
+	}*/
 	 stage('package') {
             steps {
 		tool name: 'maven', type: 'maven'
