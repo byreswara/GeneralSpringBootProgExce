@@ -54,9 +54,8 @@ pipeline {
             steps { 
             sh "docker build -t myapp:v0.${BUILD_NUMBER} ."
             sh "docker tag myapp:v0.${BUILD_NUMBER} 13.212.168.95:8083/myapp:v0.${BUILD_NUMBER}"
-	    withCredentials([usernamePassword(credentialsId: 'nexus_cred', passwordVariable: 'nexus-docker_pass', usernameVariable: 'nexus_docker_user')]) {
-            sh "docker login --username $nexus_docker_user --password $nexus-docker_pass 13.212.168.95:8083"
-	    sh "docker push 13.212.168.95:8083/myapp:v0.${BUILD_NUMBER}"
+	    withDockerRegistry(credentialsId: 'dockrrigistry', url: 'http://13.212.168.95:8083') {
+             sh "docker push 13.212.168.95:8083/myapp:v0.${BUILD_NUMBER}"
             }
            }
 	  }  
