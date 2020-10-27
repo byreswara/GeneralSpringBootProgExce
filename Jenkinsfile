@@ -23,10 +23,7 @@ pipeline {
              steps {
                  withSonarQubeEnv('sonar') {
                   //sh 'mvn sonar:sonar'
-			 mvn sonar:sonar \
-  -Dsonar.projectKey=myproject \
-  -Dsonar.host.url=http://13.212.163.49:9000 \
-  -Dsonar.login=6ae04962f89ae661db1d9e291e011a4526a859c8
+			 mvn sonar:sonar -Dsonar.projectKey=myproject  -Dsonar.host.url=http://13.212.163.49:9000  -Dsonar.login=6ae04962f89ae661db1d9e291e011a4526a859c8
                  }    
              }
          }
