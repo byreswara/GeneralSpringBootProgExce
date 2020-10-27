@@ -4,7 +4,7 @@ pipeline {
        maven 'maven'
      }
      environment {
-        NEXUS_URL = "http://13.229.50.57:8081/content/repositories/releases/"
+        NEXUS_URL = "http://13.212.163.49:8081/repository/releases/"
 	NEXUS_REPO_ID = "releases"
 	GROUP_ID="`echo -e 'setns x=http://maven.apache.org/POM/4.0.0\ncat /x:project/x:groupId/text()' | xmllint --shell pom.xml | grep -v /`"
         ARTIFACT_ID="`echo -e 'setns x=http://maven.apache.org/POM/4.0.0\ncat /x:project/x:artifactId/text()' | xmllint --shell pom.xml | grep -v /`"
@@ -53,9 +53,9 @@ pipeline {
      stage("Build Docker image and push to docker hosted nexus repo") {
             steps { 
             sh "docker build -t myapp:v0.${BUILD_NUMBER} ."
-            sh "docker tag myapp:v0.${BUILD_NUMBER} 13.212.168.95:8083/myapp:v0.${BUILD_NUMBER}"
-	    withDockerRegistry(credentialsId: 'dockrrigistry', url: 'http://13.212.168.95:8083') {
-             sh "docker push 13.212.168.95:8083/myapp:v0.${BUILD_NUMBER}"
+            sh "docker tag myapp:v0.${BUILD_NUMBER} 13.212.163.49:8083/myapp:v0.${BUILD_NUMBER}"
+	    withDockerRegistry(credentialsId: 'dockrrigistry', url: 'http://13.212.163.49:8083') {
+             sh "docker push 13.212.163.49:8083/myapp:v0.${BUILD_NUMBER}"
             }
            }
 	  }  
@@ -89,7 +89,7 @@ pipeline {
             steps {
 		sshPublisher(publishers: [sshPublisherDesc(configName: 'ansible-server', 
 							   transfers: [sshTransfer(cleanRemote: false, 
-							   excludes: '', execCommand: 'docker run -itd byresh/myapp:v0.${BUILD_NUMBER}', 
+							   excludes: '', execCommand: 'docker run -itd 13.212.163.49:8083/myapp:v0.${BUILD_NUMBER}', 
 							   flatten: false, 
 							   makeEmptyDirs: false, 
 							  noDefaultExcludes: false, 
