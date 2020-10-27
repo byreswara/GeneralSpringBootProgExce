@@ -19,27 +19,41 @@ pipeline {
                 sh 'mvn clean test'
 	    }
 	 }
-	/* stage("SonarQube analysis") {
+	 stage("SonarQube analysis") {
              steps {
                  withSonarQubeEnv('sonar') {
-                  sh 'mvn sonar:sonar'
+                  //sh 'mvn sonar:sonar'
+			 mvn sonar:sonar \
+  -Dsonar.projectKey=myproject \
+  -Dsonar.host.url=http://13.212.163.49:9000 \
+  -Dsonar.login=6ae04962f89ae661db1d9e291e011a4526a859c8
                  }    
              }
-         }*/
+         }
+	 stage("Quality Gate status") {
+	  steps {
+	    script {
+                def qualitygate = waitForQualityGate()
+                if (qualitygate.status != "OK") {
+                  error "Pipeline aborted due to quality gate coverage failure: ${qualitygate.status}"	
+		}
+	    }
+	    }
+	}
 	 stage('package') {
             steps {
 		tool name: 'maven', type: 'maven'
                 sh 'mvn package'
 		}
 	 }
-	/* stage('Publish Artifacts to Nexus') {
+	stage('Publish Artifacts to Nexus') {
             steps {
               script{
 	        sh "mvn -B deploy:deploy-file -Durl=$NEXUS_URL -DrepositoryId=$NEXUS_REPO_ID -DgroupId=$GROUP_ID -Dversion=$NEXUS_VERSION -DartifactId=$ARTIFACT_ID -Dpackaging=war -Dfile=$FILE_NAME"
 	      }
             }
 	  }
-	*/
+	
    /*stage("Build Docker image and push to dockerhub") {
             steps { 
             sh "docker build -t myapp:v0.${BUILD_NUMBER} ."
@@ -59,7 +73,7 @@ pipeline {
             }
            }
 	  }  
-	/* stage('Waiting for Approval'){
+	 stage('Waiting for Approval'){
            steps {
 	      script {
 	        slackSend channel: '#anz',
@@ -102,6 +116,6 @@ pipeline {
 							  useWorkspaceInPromotion: false, 
 							  verbose: false)])
 	    }
-	  }*/
+	  }
         }
 }
