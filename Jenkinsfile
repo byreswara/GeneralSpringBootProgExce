@@ -96,7 +96,7 @@ pipeline {
                 }
 	   }
 	 }
-	 stage("Deploy to SIT Environment") {
+	/* stage("Deploy to SIT Environment") {
             steps {
 		sshPublisher(publishers: [sshPublisherDesc(configName: 'ansible-server', 
 							   transfers: [sshTransfer(cleanRemote: false, 
@@ -113,6 +113,13 @@ pipeline {
 							  useWorkspaceInPromotion: false, 
 							  verbose: false)])
 	    }
-	  }
+	  }*/
+	    stage("deploy docker image") {
+            steps {                   
+	    withDockerRegistry(credentialsId: 'dockrrigistry', url: 'http://13.212.163.49:8083') {
+             sh "docker run -itd 13.212.163.49:8083/myapp:v0.${BUILD_NUMBER}"
+            }
+           }
+	  }  
         }
 }
