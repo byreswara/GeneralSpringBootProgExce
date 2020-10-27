@@ -50,7 +50,7 @@ pipeline {
             }
            }
 	  }*/
-     stage("Build Docker image and push to dockerhub") {
+     stage("Build Docker image and push to docker hosted nexus repo") {
             steps { 
             sh "docker build -t myapp:v0.${BUILD_NUMBER} ."
             sh "docker tag myapp:v0.${BUILD_NUMBER} 13.212.168.95:8083/myapp:v0.${BUILD_NUMBER}"
