@@ -79,7 +79,7 @@ pipeline {
                     try {
                         timeout(time:30, unit:'MINUTES') {
                             env.APPROVE_SIT = input message: 'push docker image', ok: 'Continue',
-                                parameters: [choice(name: 'push docker image', choices: 'YES\nNO', description: 'push docker image?')]
+                                parameters: [choice(name: 'push docker image', choices: 'YES\nNO', description: 'deploy 13.212.163.49:8083/myapp:v0.${BUILD_NUMBER} image?')]
                             if (env.APPROVE_SIT == 'YES')
 				{
                                 env.DSIT = true
