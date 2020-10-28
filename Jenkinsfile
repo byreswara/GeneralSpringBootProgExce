@@ -4,7 +4,7 @@ pipeline {
        maven 'maven'
      }
      environment {
-        NEXUS_URL = "http://13.212.163.49:8081/repository/releases/"
+        NEXUS_URL = "http://18.141.217.127:8081/repository/releases/"
 	NEXUS_REPO_ID = "releases"
 	GROUP_ID="`echo -e 'setns x=http://maven.apache.org/POM/4.0.0\ncat /x:project/x:groupId/text()' | xmllint --shell pom.xml | grep -v /`"
         ARTIFACT_ID="`echo -e 'setns x=http://maven.apache.org/POM/4.0.0\ncat /x:project/x:artifactId/text()' | xmllint --shell pom.xml | grep -v /`"
@@ -23,7 +23,7 @@ pipeline {
              steps {
                  withSonarQubeEnv('sonar') {
                   //sh 'mvn sonar:sonar'
-		    sh 'mvn sonar:sonar -Dsonar.projectKey=myproject  -Dsonar.host.url=http://13.212.163.49:9000  -Dsonar.login=6ae04962f89ae661db1d9e291e011a4526a859c8'
+		    sh 'mvn sonar:sonar -Dsonar.projectKey=myproject  -Dsonar.host.url=http://18.141.217.127:9000  -Dsonar.login=6ae04962f89ae661db1d9e291e011a4526a859c8'
                  }    
              }
          }
@@ -46,7 +46,7 @@ pipeline {
 	stage('Publish Artifacts to Nexus') {
             steps {
               script{
-	        sh "mvn -B deploy:deploy-file -Durl=$NEXUS_URL -DrepositoryId=$NEXUS_REPO_ID -DgroupId=$GROUP_ID -Dversion=$NEXUS_VERSION -DartifactId=$ARTIFACT_ID -Dpackaging=war -Dfile=$FILE_NAME"
+	        sh "mvn -B deploy:deploy-file -Durl=$NEXUS_URL -DrepositoryId=$NEXUS_REPO_ID -DgroupId=$GROUP_ID -Dversion=$NEXUS_VERSION -DartifactId=$ARTIFACT_ID -Dpackaging=jar -Dfile=$FILE_NAME"
 	      }
             }
 	  }
@@ -64,9 +64,9 @@ pipeline {
      stage("Build Docker image and push to docker hosted nexus repo") {
             steps { 
             sh "docker build -t myapp:v0.${BUILD_NUMBER} ."
-            sh "docker tag myapp:v0.${BUILD_NUMBER} 13.212.163.49:8083/myapp:v0.${BUILD_NUMBER}"
-	    withDockerRegistry(credentialsId: 'dockrrigistry', url: 'http://13.212.163.49:8083') {
-             sh "docker push 13.212.163.49:8083/myapp:v0.${BUILD_NUMBER}"
+            sh "docker tag myapp:v0.${BUILD_NUMBER} 18.141.217.127:8083/myapp:v0.${BUILD_NUMBER}"
+	    withDockerRegistry(credentialsId: 'dockrrigistry', url: 'http://18.141.217.127:8083') {
+             sh "docker push 18.141.217.127:8083/myapp:v0.${BUILD_NUMBER}"
             }
            }
 	  }  
@@ -79,7 +79,7 @@ pipeline {
                     try {
                         timeout(time:30, unit:'MINUTES') {
                             env.APPROVE_SIT = input message: 'push docker image', ok: 'Continue',
-                                parameters: [choice(name: 'push docker image', choices: 'YES\nNO', description: 'deploy 13.212.163.49:8083/myapp:v0.${BUILD_NUMBER} image?')]
+                                parameters: [choice(name: 'push docker image', choices: 'YES\nNO', description: 'deploy 18.141.217.127:8083/myapp:v0.${BUILD_NUMBER} image?')]
                             if (env.APPROVE_SIT == 'YES')
 				{
                                 env.DSIT = true
@@ -116,8 +116,8 @@ pipeline {
 	  }*/
 	    stage("deploy docker image") {
             steps {                   
-	    withDockerRegistry(credentialsId: 'dockrrigistry', url: 'http://13.212.163.49:8083') {
-             sh "docker run -itd 13.212.163.49:8083/myapp:v0.${BUILD_NUMBER}"
+	    withDockerRegistry(credentialsId: 'dockrrigistry', url: 'http://18.141.217.127:8083') {
+             sh "docker run -itd 18.141.217.127:8083/myapp:v0.${BUILD_NUMBER}"
             }
            }
 	  }  
